@@ -26,7 +26,7 @@ let messaging: admin.messaging.Messaging;
  */
 export function initializeSender(
   messagingInstance: admin.messaging.Messaging,
-  senderConfig: Partial<SenderConfig> = {}
+  senderConfig: Partial<SenderConfig> = {},
 ) {
   messaging = messagingInstance;
   config = { ...DEFAULT_CONFIG, ...senderConfig };
@@ -49,7 +49,15 @@ export interface NotificationPayload {
  * Build the FCM message from payload
  */
 function buildMessage(payload: NotificationPayload): admin.messaging.Message {
-  const { fcmToken, categoryId, eventName, timeStr, minutesBefore, title, body } = payload;
+  const {
+    fcmToken,
+    categoryId,
+    eventName,
+    timeStr,
+    minutesBefore,
+    title,
+    body,
+  } = payload;
 
   const notificationTitle = title || eventName;
   const notificationBody =
@@ -58,7 +66,6 @@ function buildMessage(payload: NotificationPayload): admin.messaging.Message {
       ? `It is time for ${eventName}${timeStr ? ` (${timeStr})` : ""}`
       : `Upcoming: ${eventName} in ${minutesBefore} minutes${timeStr ? ` (${timeStr})` : ""}`);
 
-  return {
   return {
     // CRITICAL: We DO NOT send a "notification" block here.
     // This allows the Service Worker to handle the display 100% of the time,
@@ -109,7 +116,9 @@ function buildMessage(payload: NotificationPayload): admin.messaging.Message {
  *
  * @returns true if sent successfully, false otherwise
  */
-export async function sendNotification(payload: NotificationPayload): Promise<boolean> {
+export async function sendNotification(
+  payload: NotificationPayload,
+): Promise<boolean> {
   const message = buildMessage(payload);
 
   try {
@@ -122,11 +131,16 @@ export async function sendNotification(payload: NotificationPayload): Promise<bo
       error.code === "messaging/registration-token-not-registered" ||
       error.code === "messaging/invalid-registration-token"
     ) {
-      console.log(`[NotifyKit] Removing invalid token: ${payload.fcmToken.substring(0, 20)}...`);
+      console.log(
+        `[NotifyKit] Removing invalid token: ${payload.fcmToken.substring(0, 20)}...`,
+      );
       try {
         await deleteUser(payload.fcmToken);
       } catch (deleteError) {
-        console.error("[NotifyKit] Failed to delete invalid token:", deleteError);
+        console.error(
+          "[NotifyKit] Failed to delete invalid token:",
+          deleteError,
+        );
       }
     }
     console.error("[NotifyKit] Failed to send notification:", error);
@@ -141,7 +155,15 @@ export async function sendNotification(payload: NotificationPayload): Promise<bo
  */
 export function createSendNotificationFunction() {
   return onRequest(async (req, res) => {
-    const { fcmToken, categoryId, eventName, timeStr, minutesBefore, title, body } = req.body;
+    const {
+      fcmToken,
+      categoryId,
+      eventName,
+      timeStr,
+      minutesBefore,
+      title,
+      body,
+    } = req.body;
 
     if (!fcmToken || !eventName) {
       res.status(400).send({ error: "Missing fcmToken or eventName" });
@@ -218,7 +240,9 @@ export function createTestNotificationFunction() {
 
     try {
       await messaging.send(message);
-      console.log(`[NotifyKit] Sent test notification to ${token.substring(0, 20)}...`);
+      console.log(
+        `[NotifyKit] Sent test notification to ${token.substring(0, 20)}...`,
+      );
       res.status(200).send({ success: true });
     } catch (error) {
       console.error("[NotifyKit] Failed to send test notification:", error);
