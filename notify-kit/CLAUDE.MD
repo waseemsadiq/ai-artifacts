@@ -51,16 +51,22 @@ NotifyKit implements a **dual-path architecture** for maximum reliability:
 feature/XX-description  →  staging  →  main (production)
 ```
 
+### Code Change Workflow (Library/Artifact)
+
+Since `notify-kit` is a library, "Deployment" means merging verified code to `main` for consumers to pull.
+
 1.  **Step 0: Create Issue**: `gh issue create --title "Feature: X" --body "..."`
 2.  **Step 1: Feature Branch**: `git checkout -b feature/XX-description`
-3.  **Step 2: Build & Test**: Run `npm run build` and `npm run test` across workspaces.
-4.  **Step 3: Document**: Update `README.md`, `CLAUDE.MD`, and `.cursorrules` as needed.
-5.  **Step 4: Commit**: Use conventional commits (e.g., `feat: #XX Add xyz`).
-    - Add `Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>` to commits.
-6.  **Step 5: PR to Staging**: Push to origin and create PR. Merge to `staging` for testing.
-7.  **Step 6: Merge to Main**: After verification, merge to `main`.
+3.  **Step 2: Build & Verify**:
     ```bash
-    # Merge PR on GitHub (merges feature → main)
+    npm run build # Must pass before merging
+    npm run test
+    ```
+4.  **Step 3: Commit**: Use conventional commits (e.g., `feat: #XX Add xyz`).
+5.  **Step 4: PR**: Push to origin and create PR.
+6.  **Step 5: Merge**: Merge PR to `main` (No staging environment for the library itself).
+    ```bash
+    # Merge PR on GitHub
     # Sync local main
     git checkout main && git pull origin main
     ```
