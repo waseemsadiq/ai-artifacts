@@ -24,7 +24,7 @@ import {
   initializeStorage,
   saveUserPreferences,
   updateCategorySubscription,
-  getAllUsers, // Added for completeness, though not used in sync
+  // getAllUsers, // Added for completeness, though not used in sync
 } from "./storage";
 import {
   initializeSender,
@@ -49,7 +49,7 @@ const QUEUE_NAME = "notifications";
 const SEND_FUNCTION_URL = `https://${LOCATION}-${PROJECT_ID}.cloudfunctions.net/sendUserNotification`;
 
 // Your event source configuration
-const EVENT_API_URL = "https://api.example.com/events"; // Replace with your API
+// const EVENT_API_URL = "https://api.example.com/events"; // Replace with your API
 
 // ============================================================================
 // INITIALIZATION
