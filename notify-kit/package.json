@@ -1,0 +1,37 @@
+{
+  "name": "notify-kit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A dual-path notification system for PWAs with FCM push and device fallback",
+  "author": "Waseem Sadiq",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "clean": "npm run clean --workspaces",
+    "lint": "npm run lint --workspaces",
+    "test": "npm run test --workspaces"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/waseemsadiq/notify-kit.git"
+  },
+  "keywords": [
+    "notifications",
+    "pwa",
+    "firebase",
+    "fcm",
+    "push-notifications",
+    "service-worker",
+    "offline-first"
+  ]
+}
