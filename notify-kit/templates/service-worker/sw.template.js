@@ -90,6 +90,10 @@ async function checkAndShowDeviceNotifications() {
         tag: notification.id,
         requireInteraction: true,
         vibrate: [200, 100, 200],
+        actions: [
+          { action: "open", title: "Open App" },
+          { action: "dismiss", title: "Dismiss" },
+        ],
         data: {
           categoryId: notification.categoryId,
           eventName: notification.eventName,
@@ -172,6 +176,10 @@ try {
       tag: notificationId,
       requireInteraction: true,
       vibrate: [200, 100, 200],
+      actions: [
+        { action: "open", title: "Open App" },
+        { action: "dismiss", title: "Dismiss" },
+      ],
       data: {
         ...payload.data,
         type: "push_notification",
