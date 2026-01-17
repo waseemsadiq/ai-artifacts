@@ -13,7 +13,6 @@ import {
   requestFCMToken,
   setupForegroundMessages,
   buildFunctionUrl,
-  syncPreferencesToBackend,
 } from '@notify-kit/core';
 
 /**
@@ -134,7 +133,7 @@ export function useNotifications(
 
     // Auto-initialize Firebase
     if (opts.autoInitialize) {
-      initializeFirebase(config.firebase).catch((err) => {
+      initializeFirebase(config.firebase).catch((err: unknown) => {
         console.error('[NotifyKit] Failed to initialize Firebase:', err);
       });
     }
@@ -151,15 +150,15 @@ export function useNotifications(
   useEffect(() => {
     if (!isPushEnabled || !foregroundHandlerRef.current) return;
 
-    setupForegroundMessages((payload) => {
+    setupForegroundMessages((payload: PushPayload) => {
       if (foregroundHandlerRef.current) {
         foregroundHandlerRef.current(payload);
       }
     })
-      .then((unsub) => {
+      .then((unsub: () => void) => {
         unsubscribeRef.current = unsub;
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error('[NotifyKit] Failed to set up foreground messages:', err);
       });
   }, [isPushEnabled]);

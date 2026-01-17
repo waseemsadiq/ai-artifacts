@@ -6,7 +6,7 @@
  * @module @notify-kit/core
  */
 
-import type { FirebaseConfig, PushPayload } from '../types';
+import type { PushPayload } from '../types';
 import { getFirebaseMessaging, isFirebaseInitialized } from './init';
 
 /**
@@ -109,9 +109,9 @@ export async function setupForegroundMessages(
 
   const { onMessage: firebaseOnMessage } = await import('firebase/messaging');
 
-  return firebaseOnMessage(messaging, (payload) => {
+  return firebaseOnMessage(messaging, (payload: PushPayload) => {
     console.log('[NotifyKit] Foreground message received:', payload);
-    onMessage(payload as PushPayload);
+    onMessage(payload);
   });
 }
 
