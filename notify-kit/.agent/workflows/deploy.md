@@ -54,24 +54,14 @@ This workflow defines how to build and deploy NotifyKit components.
    git push -u origin feature/XX-description
    ```
 
-7. Merge to staging and deploy.
+7. Merge to main.
 
    ```bash
-   git checkout staging && git pull origin staging
-   git merge feature/XX-description --no-edit
-   git push origin staging
-   firebase deploy --only functions
-   firebase hosting:channel:deploy staging
+   # Merge Pull Request via GitHub or CLI
+   gh pr merge --merge --delete-branch
    ```
 
-8. After testing on staging, merge to main and deploy to production.
-
-   ```bash
-   # Merge on GitHub
-   firebase deploy --only hosting
-   ```
-
-9. Sync local main.
+8. Sync local main.
    ```bash
    git checkout main && git pull origin main
    ```

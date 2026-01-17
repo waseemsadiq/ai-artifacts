@@ -19,13 +19,14 @@ This file contains the "reconstruction blueprint" and critical rules for the Not
 
 ## 🛠 Operation & Deployment
 
-### Workflow: Feature Branch → Staging → Production
+### Workflow: Feature Branch → Merge
 
 ```
-feature/XX-description  →  staging  →  main (production)
+feature/XX-description  →  main
 ```
 
 - **Issue Tracking**: Create a GitHub issue before starting work.
+- **Verification**: `npm run build` MUST pass before merging.
 - **Commit Format**: Conventional commits (e.g., `feat: #XX description`).
 - **Sync Logic**: After merging to main, pull the latest changes locally.
 
@@ -55,14 +56,22 @@ For changes to documentation, config files, or other non-app files (`.cursorrule
 - **Trigger**: "pr summary" or "pull request summary".
 - **Action**: Return markdown code block in the chat response.
 - **Format**:
-  ````markdown
+  ```markdown
   ## 🎨 [Feature/Fix Title]
+
   ### Summary
+
   ...
+
   ### Changes
+
   ...
+
   ### Technical Details
+
   ...
+
   ### Testing
+
   ...
-  ````
+  ```
