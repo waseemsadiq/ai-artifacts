@@ -1,6 +1,6 @@
 {
   "name": "@notify-kit/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Core utilities for dual-path notification system",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
