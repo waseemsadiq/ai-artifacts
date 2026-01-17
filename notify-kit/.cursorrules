@@ -1,0 +1,40 @@
+# 📦 Project Blueprint: NotifyKit
+
+This file contains the architectural standards and lessons learned for NotifyKit.
+
+## 🏗 Project Architecture
+
+- **Core**: TypeScript utilities for notification scheduling and data management.
+- **React**: Hooks for PWA integration.
+- **Backend**: Firebase Cloud Functions + Cloud Tasks for server-triggered alerts.
+- **Service Worker**: Dual-path engine (FCM + Device Fallback).
+
+## 🚀 Key Modules
+
+### Dual Notification Architecture
+1. **FCM (Primary)**:
+   - Data-only payloads (no `notification` object).
+   - SW handles display via `registration.showNotification`.
+   - Actions: "Open App", "Dismiss".
+2. **Device Fallback**:
+   - IndexedDB store for scheduled events.
+   - SW monitors and displays if push misses its window.
+
+### SW Template Injection
+- Placeholders like `__FIREBASE_API_KEY__` are injected at build time.
+- **Rule**: Always edit `.template.js` files, never generated files.
+
+## 🧠 Lessons Learned (DO NOT BREAK)
+
+- **System Notifications**: Rely on `registration.showNotification` for all alerts.
+- **Data-only FCM**: Moving payloads to `data` prevents duplicate/automatic alerts from FCM SDK.
+- **iOS Reliability**: Return promises from SW handlers and use action buttons.
+- **Same-Day Triggers**: When a category is newly enabled, immediately schedule today's upcoming events.
+
+## 🤝 AI Coordination
+- **Sync Rule**: `CLAUDE.MD`, `.cursorrules`, and `.agent/workflows/deploy.md` must be kept in sync.
+- **Permission Rule**: Ask for user permission BEFORE committing/pushing changes to rules files.
+
+## 🤖 PR Summaries
+- **Trigger**: "pull request summary" or "pr summary".
+- **Action**: Return markdown in a code block directly in the reply.
