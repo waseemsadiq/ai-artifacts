@@ -59,10 +59,10 @@ function buildMessage(payload: NotificationPayload): admin.messaging.Message {
       : `Upcoming: ${eventName} in ${minutesBefore} minutes${timeStr ? ` (${timeStr})` : ""}`);
 
   return {
-    notification: {
-      title: notificationTitle,
-      body: notificationBody,
-    },
+  return {
+    // CRITICAL: We DO NOT send a "notification" block here.
+    // This allows the Service Worker to handle the display 100% of the time,
+    // avoiding duplicate notifications from the browser's default behavior.
     webpush: {
       headers: {
         Urgency: "high",
@@ -82,10 +82,7 @@ function buildMessage(payload: NotificationPayload): admin.messaging.Message {
       payload: {
         aps: {
           sound: "default",
-          alert: {
-            title: notificationTitle,
-            body: notificationBody,
-          },
+          // alert: { ... }  <-- Removed to prevent double notification on iOS if SW handles it
           contentAvailable: true,
         },
       },
@@ -95,6 +92,8 @@ function buildMessage(payload: NotificationPayload): admin.messaging.Message {
       },
     },
     data: {
+      title: notificationTitle,
+      body: notificationBody,
       categoryId,
       eventName,
       timeStr: timeStr || "",

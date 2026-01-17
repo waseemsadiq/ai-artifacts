@@ -24,13 +24,20 @@ import {
   initializeStorage,
   saveUserPreferences,
   updateCategorySubscription,
+  getAllUsers, // Added for completeness, though not used in sync
 } from "./storage";
 import {
   initializeSender,
   createSendNotificationFunction,
   createTestNotificationFunction,
 } from "./sender";
-import { createDailyScheduler, EventSource, SchedulableEvent } from "./scheduler";
+import { 
+  createDailyScheduler, 
+  EventSource, 
+  SchedulableEvent,
+  scheduleTaskForUser // Imported for immediate scheduling
+} from "./scheduler";
+import { CloudTasksClient } from "@google-cloud/tasks";
 
 // ============================================================================
 // CONFIGURATION - CUSTOMIZE THESE FOR YOUR PROJECT
@@ -39,6 +46,7 @@ import { createDailyScheduler, EventSource, SchedulableEvent } from "./scheduler
 const PROJECT_ID = process.env.GCLOUD_PROJECT || "your-project-id";
 const LOCATION = "us-central1";
 const QUEUE_NAME = "notifications";
+const SEND_FUNCTION_URL = `https://${LOCATION}-${PROJECT_ID}.cloudfunctions.net/sendUserNotification`;
 
 // Your event source configuration
 const EVENT_API_URL = "https://api.example.com/events"; // Replace with your API
@@ -114,7 +122,50 @@ export const syncUserPreferences = onRequest({ cors: true }, async (req, res) =>
   }
 
   try {
+    // 1. Fetch existing preferences to detect changes
+    const userRef = db.collection("users").doc(token);
+    const existingDoc = await userRef.get();
+    const oldPrefs = existingDoc.exists ? (existingDoc.data()?.preferences || {}) : {};
+    
+    // 2. Save new preferences
     await saveUserPreferences(token, preferences, dateOverrides);
+
+    // 3. Detect newly-enabled categories
+    const newCategories = preferences.categories || {};
+    const oldCategories = oldPrefs.categories || {};
+    
+    const newlyEnabled = Object.keys(newCategories).filter(
+      (catId) => newCategories[catId] && !oldCategories[catId]
+    );
+
+    // 4. Schedule same-day notifications for newly-enabled categories
+    if (newlyEnabled.length > 0) {
+      console.log(`[NotifyKit] Newly enabled categories: ${newlyEnabled.join(", ")}`);
+      
+      const today = new Date();
+      const events = await eventSource.getEventsForDate(today);
+      const relevantEvents = events.filter(e => newlyEnabled.includes(e.categoryId));
+
+      if (relevantEvents.length > 0) {
+        const tasksClient = new CloudTasksClient();
+        const queuePath = tasksClient.queuePath(PROJECT_ID, LOCATION, QUEUE_NAME);
+
+        for (const event of relevantEvents) {
+          await scheduleTaskForUser(
+            tasksClient,
+            queuePath,
+            SEND_FUNCTION_URL,
+            token,
+            preferences,
+            event,
+            today,
+            dateOverrides,
+            false // Don't force immediate if time already passed
+          );
+        }
+      }
+    }
+
     res.status(200).send({ success: true });
   } catch (error) {
     console.error("[NotifyKit] Failed to sync preferences:", error);

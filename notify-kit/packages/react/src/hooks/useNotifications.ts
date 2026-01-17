@@ -45,8 +45,6 @@ export interface UseNotificationsOptions {
   autoInitialize?: boolean;
   /** Local storage key for push enabled state */
   pushEnabledKey?: string;
-  /** Local storage key for first enabled date */
-  firstEnabledDateKey?: string;
   /** Cloud Function name for syncing preferences */
   syncFunctionName?: string;
   /** Cloud Function name for category subscription */
@@ -58,7 +56,6 @@ export interface UseNotificationsOptions {
 const defaultOptions: Required<UseNotificationsOptions> = {
   autoInitialize: true,
   pushEnabledKey: 'notifykit_pushEnabled',
-  firstEnabledDateKey: 'notifykit_pushFirstEnabled',
   syncFunctionName: 'syncUserPreferences',
   categoryFunctionName: 'manageCategorySubscription',
   region: 'us-central1',
@@ -222,11 +219,6 @@ export function useNotifications(
           // Save enabled state
           localStorage.setItem(opts.pushEnabledKey, 'true');
 
-          // Track first enable date (for first-day gap detection)
-          if (!localStorage.getItem(opts.firstEnabledDateKey)) {
-            localStorage.setItem(opts.firstEnabledDateKey, new Date().toISOString());
-          }
-
           setIsPushEnabled(true);
           showStatus('Notifications Enabled');
           return true;
@@ -246,7 +238,7 @@ export function useNotifications(
         setIsProcessing(false);
       }
     },
-    [config.firebase.vapidKey, opts.pushEnabledKey, opts.firstEnabledDateKey, showStatus]
+    [config.firebase.vapidKey, opts.pushEnabledKey, showStatus]
   );
 
   /**
