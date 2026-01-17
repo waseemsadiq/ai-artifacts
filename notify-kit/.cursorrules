@@ -19,14 +19,14 @@ This file contains the "reconstruction blueprint" and critical rules for the Not
 
 ## 🛠 Operation & Deployment
 
-### Workflow: Feature Branch → Merge
+### Workflow: Feature Branch → Staging → Main
 
 ```
-feature/XX-description  →  main
+feature/XX  →  staging (verify)  →  main (release)
 ```
 
 - **Issue Tracking**: Create a GitHub issue before starting work.
-- **Verification**: `npm run build` MUST pass before merging.
+- **Verification**: `npm run build` MUST pass on `staging` before PR to `main`.
 - **Commit Format**: Conventional commits (e.g., `feat: #XX description`).
 - **Sync Logic**: After merging to main, pull the latest changes locally.
 

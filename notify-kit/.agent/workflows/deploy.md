@@ -28,40 +28,51 @@ This workflow defines how to build and deploy NotifyKit components.
    git checkout -b feature/XX-description
    ```
 
-3. Bump version if necessary.
+3. Bump version and Build.
 
    ```bash
    node scripts/bump.js X.X.X
-   ```
-
-4. Build the project.
-
-   ```bash
    npm run build
    ```
 
-5. Test locally.
+4. Test locally.
 
    ```bash
    npm run test
    ```
 
-6. Commit and push.
+5. Document changes (README, etc.) and Commit.
 
    ```bash
    git add .
-   git commit -m "#XX Description"
-   git push -u origin feature/XX-description
+   git commit -m "feat: #XX Description"
    ```
 
-7. Merge to main.
+6. Merge to Staging & Verify.
 
    ```bash
-   # Merge Pull Request via GitHub or CLI
-   gh pr merge --merge --delete-branch
+   git checkout staging && git pull origin staging
+   git merge feature/XX-description --no-edit
+   npm run build
+   git push origin staging
    ```
 
-8. Sync local main.
+7. Publish to Main (PR).
+
+   ```bash
+   git checkout feature/XX-description
+   git push -u origin feature/XX-description
+   gh pr create --title "feat: Description" --body "Closes #XX"
+   ```
+
+8. Merge and Cleanup.
+
+   ```bash
+   gh pr merge --merge --delete-branch
+   gh issue close XX
+   ```
+
+9. Sync local main.
    ```bash
    git checkout main && git pull origin main
    ```

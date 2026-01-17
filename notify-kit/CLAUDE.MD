@@ -53,23 +53,29 @@ feature/XX-description  →  staging  →  main (production)
 
 ### Code Change Workflow (Library/Artifact)
 
-Since `notify-kit` is a library, "Deployment" means merging verified code to `main` for consumers to pull.
+Since `notify-kit` is a library, "Deployment" means merging verified code to `main`.
+**Crucially**, we use a `staging` branch to verify integration before merging to `main`.
 
 1.  **Step 0: Create Issue**: `gh issue create --title "Feature: X" --body "..."`
 2.  **Step 1: Feature Branch**: `git checkout -b feature/XX-description`
-3.  **Step 2: Build & Verify**:
+3.  **Step 2: Build & Version**:
     ```bash
-    npm run build # Must pass before merging
-    npm run test
+    node scripts/bump.js patch # or minor/major
+    npm run build
     ```
-4.  **Step 3: Commit**: Use conventional commits (e.g., `feat: #XX Add xyz`).
-5.  **Step 4: PR**: Push to origin and create PR.
-6.  **Step 5: Merge**: Merge PR to `main` (No staging environment for the library itself).
+4.  **Step 3: Test Locally**: `npm run test`
+5.  **Step 4: Document**: Update `README.md` / `CLAUDE.MD` _before_ committing.
+6.  **Step 5: Merge to Staging & Verify**:
     ```bash
-    # Merge PR on GitHub
-    # Sync local main
-    git checkout main && git pull origin main
+    git checkout staging && git pull origin staging
+    git merge feature/XX-description
+    npm run build # FINAL VERIFICATION
+    git push origin staging
     ```
+7.  **Step 6: PR to Main**: Push `feature/XX` to origin -> Create PR.
+8.  **Step 7: Merge**: `gh pr merge --merge --delete-branch`
+9.  **Step 8: Close Issue**: `gh issue close XX`
+10. **Step 9: Sync Local**: `git checkout main && git pull origin main`
 
 ### GitHub CLI (gh) Commands
 
