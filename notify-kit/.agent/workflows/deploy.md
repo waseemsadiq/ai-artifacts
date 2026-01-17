@@ -31,7 +31,7 @@ This workflow defines how to build and deploy NotifyKit components.
 3. Bump version and Build.
 
    ```bash
-   node scripts/bump.js X.X.X
+   # Bump version in relevant package.json
    npm run build
    ```
 
@@ -51,7 +51,8 @@ This workflow defines how to build and deploy NotifyKit components.
 6. Merge to Staging & Verify.
 
    ```bash
-   git checkout staging && git pull origin staging
+   git fetch origin staging
+   git checkout staging || git checkout -b staging origin/staging
    git merge feature/XX-description --no-edit
    npm run build
    git push origin staging
