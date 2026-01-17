@@ -60,14 +60,15 @@ Since `notify-kit` is a library, "Deployment" means merging verified code to `ma
 2.  **Step 1: Feature Branch**: `git checkout -b feature/XX-description`
 3.  **Step 2: Build & Version**:
     ```bash
-    node scripts/bump.js patch # or minor/major
+    # Bump version in packages/core/package.json manually
     npm run build
     ```
 4.  **Step 3: Test Locally**: `npm run test`
 5.  **Step 4: Document**: Update `README.md` / `CLAUDE.MD` _before_ committing.
 6.  **Step 5: Merge to Staging & Verify**:
     ```bash
-    git checkout staging && git pull origin staging
+    git fetch origin staging
+    git checkout staging || git checkout -b staging origin/staging
     git merge feature/XX-description
     npm run build # FINAL VERIFICATION
     git push origin staging
