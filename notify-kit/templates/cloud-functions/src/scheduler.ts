@@ -38,7 +38,7 @@ export interface EventSource {
  */
 export function parseTime(timeStr: string, date: Date): Date | null {
   const d = new Date(date);
-  const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+  const match = timeStr.match(/^\s*(\d{1,2}):(\d{2})(?:\s*(AM|PM))?\s*$/i);
   if (!match) return null;
 
   let [, h, m, ampm] = match;
